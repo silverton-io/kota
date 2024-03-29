@@ -4,7 +4,7 @@
 > Kota is under active development and subject to change.
 > Key features are not yet implemented but if you want to help please feel free!
 
-**It interfaces the four ways of collecting System Logs from your Okta Tenant:**
+**Kota interfaces the four ways of collecting System Logs from your Okta Tenant:**
 
 - [AWS EventBridge Log Streaming](https://help.okta.com/en-us/content/topics/reports/log-streaming/add-aws-eb-log-stream.htm)
 - [Splunk Cloud Log Streaming](https://help.okta.com/en-us/content/topics/reports/log-streaming/add-splunk-log-stream.htm)
@@ -31,6 +31,12 @@
 - [Amazon S3](https://aws.amazon.com/s3/)
 - [Google Cloud Storage](https://cloud.google.com/storage)
 - [Azure Blob Storage](https://azure.microsoft.com/en-us/products/storage/blobs)
-- [MinIO](https://min.io/)˛
+- [MinIO](https://min.io/)
 
-It will eventually run an [embedded OLAP database](https://duckdb.org/) for rolling up statistics, aggregating events, filtering, continuous security detections/response, and more.
+
+**Kota will eventually include an [embedded OLAP database](https://duckdb.org/) for:**
+- Rolling up statistics
+- Aggregating events
+- Payload filtering and obfuscation
+- Continuous security detections
+- ...and more
