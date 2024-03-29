@@ -2,10 +2,14 @@
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/kota/blob/main/LICENSE
 
-package main
+package util
 
-func main() {
-	app := App{}
-	app.Initialize()
-	app.Run()
+import (
+	"crypto/md5"
+	"encoding/hex"
+)
+
+func Md5(s string) string {
+	m := md5.Sum([]byte(s))
+	return hex.EncodeToString(m[:])
 }
