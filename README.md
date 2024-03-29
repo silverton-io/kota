@@ -1,4 +1,8 @@
-Kota is an Okta System Log Collection and Distribution system.
+## Kota is an Okta System Log Collection and Distribution engine.
+
+> [!WARNING]
+> Kota is under active development and subject to change.
+> Key features are not yet implemented but if you want to help please feel free!
 
 **It interfaces the four ways of collecting System Logs from your Okta Tenant:**
 
@@ -11,8 +15,9 @@ Kota is an Okta System Log Collection and Distribution system.
 **with downstream systems your company uses:**
 
 - [Datadog](https://www.datadoghq.com/)
-- [Elasticsearch](https://www.elastic.co/)
+- [Elastic](https://www.elastic.co/)
 - [Splunk (Self-Hosted)](https://www.splunk.com/)
+- [IBM QRadar](https://www.ibm.com/qradar)
 - [Grafana](https://grafana.com/)
 - [InfluxDB](https://www.influxdata.com/)
 - [NewRelic](https://newrelic.com/)
@@ -28,5 +33,4 @@ Kota is an Okta System Log Collection and Distribution system.
 - [Azure Blob Storage](https://azure.microsoft.com/en-us/products/storage/blobs)
 - [MinIO](https://min.io/)˛
 
-
-It will eventually run an [embedded OLAP database](https://duckdb.org/) for rolling up statistics, aggregating events, filtering, security detections, and more.
+It will eventually run an [embedded OLAP database](https://duckdb.org/) for rolling up statistics, aggregating events, filtering, continuous security detections/response, and more.
