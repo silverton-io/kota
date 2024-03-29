@@ -2,10 +2,4 @@
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/kota/blob/main/LICENSE
 
-package main
-
-func main() {
-	app := App{}
-	app.Initialize()
-	app.Run()
-}
+package middleware

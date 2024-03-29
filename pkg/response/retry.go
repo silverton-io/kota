@@ -2,10 +2,12 @@
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/kota/blob/main/LICENSE
 
-package main
+package response
 
-func main() {
-	app := App{}
-	app.Initialize()
-	app.Run()
-}
+const (
+	RETRY_AFTER_3   string = "3"
+	RETRY_AFTER_30  string = "30"
+	RETRY_AFTER_60  string = "60"
+	RETRY_AFTER_90  string = "90"
+	RETRY_AFTER_120 string = "120"
+)
