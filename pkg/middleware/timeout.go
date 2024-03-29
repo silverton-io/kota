@@ -11,8 +11,8 @@ import (
 	"github.com/gin-contrib/timeout"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/kota/pkg/config"
-	"github.com/silverton-io/kota/pkg/response"
+	"github.com/silverton.io/kota/pkg/config"
+	"github.com/silverton.io/kota/pkg/response"
 )
 
 func timeoutHandler(c *gin.Context) {

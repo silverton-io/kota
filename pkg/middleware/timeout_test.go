@@ -13,8 +13,8 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/silverton-io/kota/pkg/config"
-	"github.com/silverton-io/kota/pkg/response"
+	"github.com/silverton.io/kota/pkg/config"
+	"github.com/silverton.io/kota/pkg/response"
 )
 
 func TestTimeout(t *testing.T) {
@@ -43,7 +43,6 @@ func TestTimeout(t *testing.T) {
 		gin.SetMode(gin.TestMode)
 		r := gin.New()
 		r.Use(Timeout(tc.config))
-		r.GET(u, testHandler)
 		ts := httptest.NewServer(r)
 
 		resp, _ := http.Get(ts.URL + u)

@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/silverton-io/kota/pkg/config"
-	"github.com/silverton-io/kota/pkg/response"
+	"github.com/silverton.io/kota/pkg/config"
+	"github.com/silverton.io/kota/pkg/response"
 	"github.com/stretchr/testify/assert"
 )
 
