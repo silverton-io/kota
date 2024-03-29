@@ -11,8 +11,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/silverton-io/kota/pkg/response"
-	testutil "github.com/silverton-io/kota/pkg/testUtil"
+	"github.com/silverton.io/kota/pkg/response"
+	testutil "github.com/silverton.io/kota/pkg/testUtil"
 )
 
 func TestHealthcheckHandler(t *testing.T) {

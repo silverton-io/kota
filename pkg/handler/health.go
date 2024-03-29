@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"silverton.io/kota/pkg/response"
+	"github.com/silverton.io/kota/pkg/response"
 )
 
 func HealthcheckHandler(c *gin.Context) {

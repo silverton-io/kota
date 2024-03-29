@@ -10,8 +10,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/kota/kota/config"
-	"github.com/silverton-io/kota/kota/response"
+	"github.com/silverton.io/kota/pkg/config"
+	"github.com/silverton.io/kota/pkg/response"
 	limiter "github.com/ulule/limiter/v3"
 	ginMiddleware "github.com/ulule/limiter/v3/drivers/middleware/gin"
 	"github.com/ulule/limiter/v3/drivers/store/memory"

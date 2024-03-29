@@ -1,4 +1,4 @@
-module silverton.io/kota
+module github.com/silverton.io/kota
 
 go 1.22.1
 

@@ -13,7 +13,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/kota/pkg/util"
+	"github.com/silverton.io/kota/pkg/util"
 )
 
 type request struct {
