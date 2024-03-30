@@ -10,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/silverton.io/kota/pkg/constants"
 	"github.com/silverton.io/kota/pkg/response"
-	"github.com/silverton.io/kota/pkg/util"
 )
 
 type OktaHookResponse struct {
@@ -24,7 +23,6 @@ func OktaHookHandler(c *gin.Context) {
 	if verification_header != "" {
 		verification = &verification_header
 	}
-	util.Pprint(verification)
 	response := OktaHookResponse{
 		Message:      response.Ok.Message,
 		Verification: verification,
