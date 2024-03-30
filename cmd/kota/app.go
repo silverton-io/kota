@@ -27,6 +27,7 @@ type App struct {
 	config *config.Config
 	engine *gin.Engine
 	debug  bool
+	// reload chan int --> TODO: reload from updated configuration without killing the running process
 }
 
 func is_debug_mode(debug string) bool {
@@ -88,8 +89,13 @@ func (a *App) initializeRouter() {
 
 func (a *App) initializeRoutes() {
 	log.Info().Msg("initializing routes")
+	// Endpoints for system administration
 	a.engine.GET(constants.DEFAULT_HEALTH_ROUTE, handler.HealthcheckHandler)
-	a.engine.GET(constants.DEFAULT_OKTA_HOOKS_ROUTE, handler.OktaHookHandler)
+	// Endpoints for incoming data
+	a.engine.POST(constants.DEFAULT_OKTA_HOOKS_ROUTE, handler.OktaHookHandler)
+	a.engine.POST(constants.DEFAULT_SPLUNK_HEC_ROUTE, handler.SplunkHecHandler)
+	a.engine.GET(constants.DEFAULT_FLIGHT_ROUTE, handler.ArrowFlightHandler)
+
 }
 
 func (a *App) initializeMiddleware() {

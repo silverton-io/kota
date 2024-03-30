@@ -3,3 +3,15 @@
 // which may be found at https://github.com/silverton-io/kota/blob/main/LICENSE
 
 package handler
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/silverton.io/kota/pkg/response"
+)
+
+func SplunkHecHandler(c *gin.Context) {
+	// TODO -> Implement me
+	c.JSON(http.StatusOK, response.Ok)
+}
