@@ -1,8 +1,7 @@
 ## Kota is an Okta System Log Collection and Distribution engine.
 
-**It has a single objective: *get mission-critical security logs to your systems faster.***
+**It is lightweight, secure, and has a single objective: *get mission-critical security logs to your systems faster.***
 
-Kota is simple, lightweight, and secure.
 
 
 > [!WARNING]
