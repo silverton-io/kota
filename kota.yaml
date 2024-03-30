@@ -5,3 +5,20 @@ app:
   env: development
   port: 8080
   trackerDomain: app.kota.stream
+
+middleware:
+  timeout:
+    enabled: true
+    ms: 2000
+  rateLimiter:
+    enabled: true
+    period: S
+    limit: 10
+  requestLogger:
+    enabled: false
+  auth:
+    enabled: true
+    tokens:
+      - a290YTprb3Rh== # basic
+      - eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTE4MTY0MDYsImV4cCI6MTc0MzM1MjQwNiwiYXVkIjoia290YS5zdHJlYW0iLCJzdWIiOiJrb3RhQGtvdGEuc3RyZWFtIiwibmFtZSI6ImtvdGEifQ.2WUjWQsBPx7mB87k3R-mNEGj1ywo8lBDOMUfJS-hxTw # jwt
+      - a290YWtvdGFrb3Rha290YWtvdGE= # arbitrary token
