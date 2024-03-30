@@ -40,3 +40,12 @@
 - Payload filtering and obfuscation
 - Continuous security detections
 - ...and more
+
+
+### Disclaimer
+
+Kota was built by channelling llm's.
+
+If it sucks, blame them.
+
+If it's useful, credit me.

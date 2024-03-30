@@ -19,7 +19,7 @@ run:
 
 # Run Kota locally in debug mode
 debug:
-	DEBUG=1 go run -ldflags="-X 'main.VERSION=x.x.dev' -gcflags='all=-N -l'" {{kota_dir}}
+	DEBUG=1 go run -ldflags="-X 'main.VERSION=x.x.dev'" {{kota_dir}}
 
 # Lint Kota
 lint:
