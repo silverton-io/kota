@@ -1,0 +1,7 @@
+version: 1.1
+
+app:
+  name: kota
+  env: development
+  port: 8080
+  trackerDomain: app.kota.stream
