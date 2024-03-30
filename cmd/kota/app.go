@@ -18,6 +18,7 @@ import (
 	"github.com/silverton.io/kota/pkg/config"
 	"github.com/silverton.io/kota/pkg/constants"
 	"github.com/silverton.io/kota/pkg/handler"
+	"github.com/silverton.io/kota/pkg/middleware"
 	"github.com/spf13/viper"
 )
 
@@ -100,6 +101,25 @@ func (a *App) initializeRoutes() {
 
 func (a *App) initializeMiddleware() {
 	log.Info().Msg("initializing middleware")
+	a.engine.Use(gin.Recovery())
+	// if a.config.Middleware.Auth.Enabled {
+	// 	log.Debug().Msg("auth middleware enabled - initializing")
+	// 	a.engine.Use(handler.AuthMiddleware(a.config.Middleware.Auth.Tokens))
+	// }
+	if a.config.Middleware.RateLimiter.Enabled {
+		log.Debug().Msg("rate limiter middleware enabled - initializing...")
+		limiter := middleware.BuildRateLimiter(a.config.Middleware.RateLimiter)
+		limiterMiddleware := middleware.BuildRateLimiterMiddleware(limiter)
+		a.engine.Use(limiterMiddleware)
+	}
+	if a.config.Middleware.Timeout.Enabled {
+		log.Debug().Msg("timeout middleware enabled - initializing...")
+		a.engine.Use(middleware.Timeout(a.config.Middleware.Timeout))
+	}
+	if a.config.Middleware.RequestLogger.Enabled {
+		log.Debug().Msg("request logger middleware enabled - initializing...")
+		a.engine.Use(middleware.RequestLogger())
+	}
 }
 
 func (a *App) initializeConsumption() {
@@ -108,7 +128,7 @@ func (a *App) initializeConsumption() {
 }
 
 func (a *App) initializeRedelivery() {
-	log.Info().Msg("initializing redelivery mechanisms")
+	log.Info().Msg("initializing redeliverer")
 }
 
 func (a *App) initialize() {
@@ -141,10 +161,10 @@ func (a *App) Run() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Info().Msg("shutting down server")
+	log.Info().Msg("shutting down kota server")
 	ctx, cancel := context.WithTimeout(context.Background(), constants.DEFAULT_SHUTDOWN_TIMEOUT)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
-		log.Fatal().Stack().Err(err).Msg("server forced to shutdown")
+		log.Fatal().Stack().Err(err).Msg("!!kota server forced to shutdown!!")
 	}
 }
