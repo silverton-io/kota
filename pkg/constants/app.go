@@ -13,3 +13,4 @@ const DEFAULT_SHUTDOWN_TIMEOUT = time.Duration(15) * time.Second
 const DEFAULT_HEALTH_ROUTE = "/health"
 const DEFAULT_FLIGHT_ROUTE = "/flight"
 const DEFAULT_OKTA_HOOKS_ROUTE = "/okta"
+const DEFAULT_SPLUNK_HEC_ROUTE = "/hec"
