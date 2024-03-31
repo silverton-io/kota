@@ -19,17 +19,18 @@ type Buffer struct {
 }
 
 func (b *Buffer) Initialize(config *config.Config) error {
-	b.inputChan = make(chan envelope.KotaEnvelope, 2000)
+	b.inputChan = make(chan envelope.KotaEnvelope, 20000) // TODO -> will this overflow if the persistence to disk is synchronous? Should it be larger? Smaller? idk, think about this later.
 	b.shutdown = make(chan int, 1)
 	b.config = config
-	go func(envelope <-chan envelope.KotaEnvelope, shutdown chan int) {
+	go func(envelope <-chan envelope.KotaEnvelope, shutdown <-chan int) {
 		for {
 			select {
 			case envelope := <-envelope:
 				util.Pprint(envelope) // TODO -> persist to disk, flush, etc
 			case <-shutdown:
 				log.Debug().Msg("shutting down buffer")
-				// TODO -> make me do something that is safe on shutdown
+				// TODO -> do something that is safe on shutdown
+				log.Debug().Msg("buffer shut down")
 				return
 			}
 		}

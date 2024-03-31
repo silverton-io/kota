@@ -169,6 +169,7 @@ func (a *App) Run() {
 	go func() {
 		log.Info().Msg("kota is running")
 		if err := server.ListenAndServe(); err != nil {
+			a.buffer.Shutdown()
 			log.Debug().Msg("kota shut down successfully")
 		}
 	}()
