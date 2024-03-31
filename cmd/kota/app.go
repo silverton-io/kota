@@ -9,12 +9,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton.io/kota/pkg/buffer"
 	"github.com/silverton.io/kota/pkg/config"
 	"github.com/silverton.io/kota/pkg/constants"
 	"github.com/silverton.io/kota/pkg/handler"
@@ -27,12 +29,13 @@ var VERSION string
 type App struct {
 	config *config.Config
 	engine *gin.Engine
+	buffer buffer.Buffer
 	debug  bool
 	// reload chan int --> TODO: reload from updated configuration without killing the running process
 }
 
 func is_debug_mode(debug string) bool {
-	if debug != "" && (debug == "true" || debug == "1") {
+	if debug != "" && (strings.ToLower(debug) == "true" || debug == "1") {
 		return true
 	}
 	return false
@@ -73,6 +76,12 @@ func (a *App) configure() {
 	}
 	a.config.App.Version = VERSION
 
+}
+
+func (a *App) initializeBuffer() {
+	log.Info().Msg("initializing buffer")
+	buffer := buffer.NewBuffer(a.config)
+	a.buffer = buffer
 }
 
 func (a *App) initializeRouter() {
@@ -122,7 +131,7 @@ func (a *App) initializeMiddleware() {
 	}
 }
 
-func (a *App) initializeConsumption() {
+func (a *App) initializeConsumer() {
 	// Consumers for EventBridge | Kinesis | Kafka go here.
 	log.Info().Msg("initializing consumer")
 }
@@ -134,12 +143,14 @@ func (a *App) initializeRedelivery() {
 func (a *App) initialize() {
 	log.Info().Msg("initializing kota")
 	a.configure()
+	// Initialize intermediary buffer
+	a.initializeBuffer()
 	// Initialize http collecter routes if configured to do so
 	a.initializeRouter()
 	a.initializeMiddleware()
 	a.initializeRoutes()
 	// Initialize consumer if configured to do so
-	a.initializeConsumption()
+	a.initializeConsumer()
 	// Initialize redelivery mechanisms
 	a.initializeRedelivery()
 }

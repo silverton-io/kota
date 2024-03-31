@@ -14,5 +14,5 @@ import (
 func ArrowFlightHandler(c *gin.Context) {
 	// TODO -> Implement me
 	// NOTES -> // https://blog.djnavarro.net/posts/2022-10-18_arrow-flight/, https://voltrondata.com/blog/data-transfer-with-apache-arrow-and-golang
-	c.JSON(http.StatusOK, response.Ok)
+	c.JSON(http.StatusOK, response.NotImplemented)
 }
