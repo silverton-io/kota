@@ -11,22 +11,32 @@ middleware:
     enabled: true
     ms: 2000
   rateLimiter:
-    enabled: true
+    enabled: false
     period: S
     limit: 10
   requestLogger:
     enabled: false
   auth:
     enabled: true
-    tokens: # TODO -> source these from somewhere
+    tokens: # TODO -> add option for remote sourcing
       - a290YTprb3Rh== # basic
       - eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTE4MTY0MDYsImV4cCI6MTc0MzM1MjQwNiwiYXVkIjoia290YS5zdHJlYW0iLCJzdWIiOiJrb3RhQGtvdGEuc3RyZWFtIiwibmFtZSI6ImtvdGEifQ.2WUjWQsBPx7mB87k3R-mNEGj1ywo8lBDOMUfJS-hxTw # jwt
       - a290YWtvdGFrb3Rha290YWtvdGE= # arbitrary token
 
 buffer:
-  records: 100
+  records: 3
   time: 30
   size: 1000000
   durability:
     enabled: true
     directory: kotabuf
+
+inputs:
+  okta:
+    eventbridge:
+      enabled: true
+      bus: default
+    hook:
+      enabled: true
+    hec:
+      enabled: true
