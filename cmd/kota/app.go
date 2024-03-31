@@ -101,9 +101,12 @@ func (a *App) initializeRoutes() {
 	log.Info().Msg("initializing routes")
 	// Endpoints for system administration
 	a.engine.GET(constants.DEFAULT_HEALTH_ROUTE, handler.HealthcheckHandler)
-	// Endpoints for incoming data
-	a.engine.POST(constants.DEFAULT_OKTA_HOOKS_ROUTE, handler.OktaHookHandler)
-	a.engine.POST(constants.DEFAULT_SPLUNK_HEC_ROUTE, handler.SplunkHecHandler)
+	// Endpoints for incoming data from Okta hooks
+	a.engine.POST(constants.DEFAULT_OKTA_HOOKS_ROUTE, handler.HttpInputHandler(a.buffer, a.config.App))
+	a.engine.GET(constants.DEFAULT_OKTA_HOOKS_ROUTE, handler.HttpInputHandler(a.buffer, a.config.App))
+	// Endpoints for incoming data from splunk hec
+	a.engine.POST(constants.DEFAULT_SPLUNK_HEC_ROUTE, handler.HttpInputHandler(a.buffer, a.config.App))
+	// Endpoints for incoming arrow flight data
 	a.engine.GET(constants.DEFAULT_FLIGHT_ROUTE, handler.ArrowFlightHandler)
 
 }

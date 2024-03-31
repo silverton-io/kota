@@ -21,4 +21,5 @@
 go.work
 
 # Scratchpad
-scratch/**
+scratch/*.go
+scratch/*.md
