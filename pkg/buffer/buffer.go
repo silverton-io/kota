@@ -33,10 +33,12 @@ func (b *Buffer) Initialize(config *config.Config) error {
 			case envelope := <-envelope:
 				b.envelopes = append(b.envelopes, envelope) // Fully rewriting on each append is nawwwwt ideal. FIXME.
 				b.bufferRecords += 1
-				if b.bufferRecords >= b.config.Records { //
+				if b.bufferRecords >= b.config.Records {
 					b.Purge()
 				}
-				util.Pprint(b.envelopes) // TODO -> persist to disk, flush, etc
+				// TODO -> Add buffer size-based purging
+				// TODO -> Add buffer time-based purging
+				util.Pprint(b.envelopes) // TODO -> persist to disk, flush, whatever
 			case <-shutdown:
 				log.Debug().Msg("shutting down buffer")
 				// TODO -> do something that is safe on shutdown
