@@ -23,14 +23,6 @@ middleware:
       - eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTE4MTY0MDYsImV4cCI6MTc0MzM1MjQwNiwiYXVkIjoia290YS5zdHJlYW0iLCJzdWIiOiJrb3RhQGtvdGEuc3RyZWFtIiwibmFtZSI6ImtvdGEifQ.2WUjWQsBPx7mB87k3R-mNEGj1ywo8lBDOMUfJS-hxTw # jwt
       - a290YWtvdGFrb3Rha290YWtvdGE= # arbitrary token
 
-buffer:
-  records: 100
-  time: 3
-  size: 1000000
-  durability:
-    enabled: true
-    directory: kotabuf
-
 inputs:
   okta:
     eventbridge:
@@ -40,3 +32,13 @@ inputs:
       enabled: true
     hec:
       enabled: true
+    api:
+      enabled: false
+
+buffer:
+  records: 100
+  time: 3
+  size: 1000000
+  durability:
+    enabled: true
+    directory: kotabuf
