@@ -39,6 +39,7 @@ func (b *Buffer) Initialize(config *config.Config) error {
 				}
 			case envelope := <-envelope:
 				b.envelopes = append(b.envelopes, envelope) // Fully rewriting on each append is nawwwwt ideal. FIXME.
+				// TODO -> If buffer durability is enabled also write this to a local file
 				b.bufferRecords += 1
 				if b.bufferRecords == 1 {
 					log.Debug().Msg("setting buffer first appended time")
@@ -58,6 +59,9 @@ func (b *Buffer) Initialize(config *config.Config) error {
 			}
 		}
 	}(b.inputChan, b.shutdown)
+
+	// TODO -> If any prior buffer files are found, load them into the new buffer and remove the file
+
 	return nil
 }
 
@@ -74,6 +78,7 @@ func (b *Buffer) Purge() error {
 	b.envelopes = []envelope.KotaEnvelope{}
 	b.bufferRecords = 0
 	b.bufferFirstAppended = time.Time{}
+	// TODO -> If buffer durability is enabled also remove the local file
 	return nil
 }
 
