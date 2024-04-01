@@ -7,6 +7,7 @@ package config
 type Config struct {
 	App         `json:"app"`
 	Middleware  `json:"middleware"`
+	Consumers   []Consumer `json:"consumers"`
 	Buffer      `json:"buffer"`
 	Destination `json:"destination"`
 }
