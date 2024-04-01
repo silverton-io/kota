@@ -14,34 +14,46 @@ import (
 )
 
 type Buffer struct {
-	config        *config.Config
-	bufferRecords int
-	bufferStart   time.Time
-	inputChan     chan envelope.KotaEnvelope
-	envelopes     []envelope.KotaEnvelope
-	shutdown      chan int
+	config              *config.Config
+	bufferRecords       int
+	bufferFirstAppended time.Time
+	inputChan           chan envelope.KotaEnvelope
+	envelopes           []envelope.KotaEnvelope
+	shutdown            chan int
 }
 
 func (b *Buffer) Initialize(config *config.Config) error {
 	b.inputChan = make(chan envelope.KotaEnvelope, 20000) // TODO -> will this overflow if the persistence to disk is synchronous? Should it be larger? Smaller? idk, think about this later.
 	b.shutdown = make(chan int, 1)
 	b.config = config
-	b.bufferStart = time.Now()
+
+	ticker := time.NewTicker(time.Duration(b.config.Time) * time.Second)
+
+	// Kick off
 	go func(envelope <-chan envelope.KotaEnvelope, shutdown <-chan int) {
 		for {
 			select {
+			case <-ticker.C:
+				if !b.bufferFirstAppended.IsZero() && time.Since(b.bufferFirstAppended) > time.Duration(b.config.Time)*time.Second {
+					log.Debug().Msg("buffer reached max time, purging")
+					b.Purge()
+				}
 			case envelope := <-envelope:
 				b.envelopes = append(b.envelopes, envelope) // Fully rewriting on each append is nawwwwt ideal. FIXME.
 				b.bufferRecords += 1
+				if b.bufferRecords == 1 {
+					log.Debug().Msg("setting buffer first appended time")
+					b.bufferFirstAppended = time.Now()
+				}
+				// Purge the buffer when it reaches the maximum number of records
 				if b.bufferRecords >= b.config.Records {
+					log.Debug().Msg("buffer reached max records, purging")
 					b.Purge()
 				}
-				// TODO -> Add buffer size-based purging
-				// TODO -> Add buffer time-based purging
 				util.Pprint(b.envelopes) // TODO -> persist to disk, flush, whatever
 			case <-shutdown:
 				log.Debug().Msg("shutting down buffer")
-				// TODO -> do something that is safe on shutdown
+				ticker.Stop()
 				log.Debug().Msg("buffer shut down")
 				return
 			}
@@ -62,8 +74,8 @@ func (b *Buffer) Purge() error {
 	log.Debug().Msg("purging buffer")
 	// Actually do something here.
 	b.envelopes = []envelope.KotaEnvelope{}
-	b.bufferStart = time.Now()
 	b.bufferRecords = 0
+	b.bufferFirstAppended = time.Time{}
 	return nil
 }
 
