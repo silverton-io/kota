@@ -4,7 +4,7 @@
 
 package config
 
-type Sink struct {
+type Destination struct {
 	Name             string `json:"name"`
 	Type             string `json:"type"`
 	DeliveryRequired bool   `json:"deliveryRequired"`

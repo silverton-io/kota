@@ -11,6 +11,6 @@ import (
 
 type Destination interface {
 	Metadata() map[string]string // FIXME - don't use map[string]interface
-	Initialize(config config.Sink) error
+	Initialize(config config.Destination) error
 	Send(batch []envelope.KotaEnvelope) error
 }

@@ -29,6 +29,7 @@ var VERSION string
 type App struct {
 	config *config.Config
 	engine *gin.Engine
+	// consumer consumer.Consumer
 	buffer buffer.Buffer
 	debug  bool
 	// reload chan int --> TODO: reload from updated configuration without killing the running process
