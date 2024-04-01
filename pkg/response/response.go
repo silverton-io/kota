@@ -12,6 +12,10 @@ var Ok = Response{
 	Message: "ok",
 }
 
+var NotImplemented = Response{
+	Message: "not implemented",
+}
+
 var InvalidContentType = Response{
 	Message: "invalid content type",
 }

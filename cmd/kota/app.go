@@ -9,12 +9,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton.io/kota/pkg/buffer"
 	"github.com/silverton.io/kota/pkg/config"
 	"github.com/silverton.io/kota/pkg/constants"
 	"github.com/silverton.io/kota/pkg/handler"
@@ -27,12 +29,13 @@ var VERSION string
 type App struct {
 	config *config.Config
 	engine *gin.Engine
+	buffer buffer.Buffer
 	debug  bool
 	// reload chan int --> TODO: reload from updated configuration without killing the running process
 }
 
 func is_debug_mode(debug string) bool {
-	if debug != "" && (debug == "true" || debug == "1") {
+	if debug != "" && (strings.ToLower(debug) == "true" || debug == "1") {
 		return true
 	}
 	return false
@@ -75,6 +78,12 @@ func (a *App) configure() {
 
 }
 
+func (a *App) initializeBuffer() {
+	log.Info().Msg("initializing buffer")
+	buffer := buffer.NewBuffer(a.config)
+	a.buffer = buffer
+}
+
 func (a *App) initializeRouter() {
 	log.Info().Msg("initializing router")
 	a.engine = gin.New()
@@ -92,9 +101,12 @@ func (a *App) initializeRoutes() {
 	log.Info().Msg("initializing routes")
 	// Endpoints for system administration
 	a.engine.GET(constants.DEFAULT_HEALTH_ROUTE, handler.HealthcheckHandler)
-	// Endpoints for incoming data
-	a.engine.POST(constants.DEFAULT_OKTA_HOOKS_ROUTE, handler.OktaHookHandler)
-	a.engine.POST(constants.DEFAULT_SPLUNK_HEC_ROUTE, handler.SplunkHecHandler)
+	// Endpoints for incoming data from Okta hooks
+	a.engine.POST(constants.DEFAULT_OKTA_HOOKS_ROUTE, handler.HttpInputHandler(a.buffer, a.config.App))
+	a.engine.GET(constants.DEFAULT_OKTA_HOOKS_ROUTE, handler.HttpInputHandler(a.buffer, a.config.App))
+	// Endpoints for incoming data from splunk hec
+	a.engine.POST(constants.DEFAULT_SPLUNK_HEC_ROUTE, handler.HttpInputHandler(a.buffer, a.config.App))
+	// Endpoints for incoming arrow flight data
 	a.engine.GET(constants.DEFAULT_FLIGHT_ROUTE, handler.ArrowFlightHandler)
 
 }
@@ -122,7 +134,7 @@ func (a *App) initializeMiddleware() {
 	}
 }
 
-func (a *App) initializeConsumption() {
+func (a *App) initializeConsumer() {
 	// Consumers for EventBridge | Kinesis | Kafka go here.
 	log.Info().Msg("initializing consumer")
 }
@@ -134,12 +146,14 @@ func (a *App) initializeRedelivery() {
 func (a *App) initialize() {
 	log.Info().Msg("initializing kota")
 	a.configure()
+	// Initialize intermediary buffer
+	a.initializeBuffer()
 	// Initialize http collecter routes if configured to do so
 	a.initializeRouter()
 	a.initializeMiddleware()
 	a.initializeRoutes()
 	// Initialize consumer if configured to do so
-	a.initializeConsumption()
+	a.initializeConsumer()
 	// Initialize redelivery mechanisms
 	a.initializeRedelivery()
 }
@@ -155,6 +169,7 @@ func (a *App) Run() {
 	go func() {
 		log.Info().Msg("kota is running")
 		if err := server.ListenAndServe(); err != nil {
+			a.buffer.Shutdown()
 			log.Debug().Msg("kota shut down successfully")
 		}
 	}()

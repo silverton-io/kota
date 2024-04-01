@@ -7,5 +7,6 @@ package config
 type Config struct {
 	App        `json:"app"`
 	Middleware `json:"middleware"`
-	Sink       Sink `json:"sink"`
+	Buffer     `json:"buffer"`
+	Sink       `json:"sink"`
 }
