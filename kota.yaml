@@ -40,3 +40,5 @@ inputs:
       enabled: true
     hec:
       enabled: true
+
+destination:

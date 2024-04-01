@@ -3,10 +3,3 @@
 // which may be found at https://github.com/silverton-io/kota/blob/main/LICENSE
 
 package config
-
-type Config struct {
-	App         `json:"app"`
-	Middleware  `json:"middleware"`
-	Buffer      `json:"buffer"`
-	Destination `json:"destination"`
-}
