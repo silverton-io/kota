@@ -3,3 +3,12 @@
 // which may be found at https://github.com/silverton-io/kota/blob/main/LICENSE
 
 package consumer
+
+import "github.com/silverton.io/kota/pkg/config"
+
+type Consumer interface {
+	Metadata() map[string]interface{} // FIXME -> Get better consumer statistics
+	Initialize(config config.Consumer) error
+	Consume() error
+	Shutdown() error
+}
