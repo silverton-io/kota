@@ -24,8 +24,8 @@ middleware:
       - a290YWtvdGFrb3Rha290YWtvdGE= # arbitrary token
 
 buffer:
-  records: 3
-  time: 5
+  records: 100
+  time: 3
   size: 1000000
   durability:
     enabled: true
