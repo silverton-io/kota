@@ -10,7 +10,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton.io/kota/pkg/config"
 	"github.com/silverton.io/kota/pkg/envelope"
-	"github.com/silverton.io/kota/pkg/util"
 )
 
 type Buffer struct {
@@ -35,7 +34,7 @@ func (b *Buffer) Initialize(config *config.Config) error {
 			select {
 			case <-ticker.C:
 				if !b.bufferFirstAppended.IsZero() && time.Since(b.bufferFirstAppended) > time.Duration(b.config.Time)*time.Second {
-					log.Debug().Msg("buffer reached max time, purging")
+					log.Info().Msg("buffer reached max time, purging")
 					b.Purge()
 				}
 			case envelope := <-envelope:
@@ -47,10 +46,10 @@ func (b *Buffer) Initialize(config *config.Config) error {
 				}
 				// Purge the buffer when it reaches the maximum number of records
 				if b.bufferRecords >= b.config.Records {
-					log.Debug().Msg("buffer reached max records, purging")
+					log.Info().Msg("buffer reached max records, purging")
 					b.Purge()
 				}
-				util.Pprint(b.envelopes) // TODO -> persist to disk, flush, whatever
+				// util.Pprint(b.envelopes) // TODO -> persist to disk, flush, whatever
 			case <-shutdown:
 				log.Debug().Msg("shutting down buffer")
 				ticker.Stop()
@@ -72,7 +71,6 @@ func (b *Buffer) Append(envelopes []envelope.KotaEnvelope) error {
 
 func (b *Buffer) Purge() error {
 	log.Debug().Msg("purging buffer")
-	// Actually do something here.
 	b.envelopes = []envelope.KotaEnvelope{}
 	b.bufferRecords = 0
 	b.bufferFirstAppended = time.Time{}
