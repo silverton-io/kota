@@ -15,6 +15,7 @@ type Input struct {
 type Okta struct {
 	Eventbridge `json:"eventbridge"`
 	Hook        `json:"hook"`
+	Api         `json:"api"`
 }
 
 type Eventbridge struct {
@@ -23,6 +24,10 @@ type Eventbridge struct {
 }
 
 type Hook struct {
+	Enabled bool `json:"enabled"`
+}
+
+type Api struct {
 	Enabled bool `json:"enabled"`
 }
 

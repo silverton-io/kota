@@ -11,7 +11,7 @@ import (
 
 type Consumer interface {
 	// Metadata() map[string]interface{} // FIXME -> Get better consumer statistics
-	Initialize(config config.Input, buffer *buffer.Buffer) error
-	Consume() error
+	Initialize(config *config.Input, buffer *buffer.Buffer) error
+	Consume()
 	Shutdown() error
 }

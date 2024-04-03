@@ -10,6 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton.io/kota/pkg/config"
 	"github.com/silverton.io/kota/pkg/envelope"
+	"github.com/silverton.io/kota/pkg/util"
 )
 
 type Buffer struct {
@@ -76,6 +77,7 @@ func (b *Buffer) Append(envelopes []envelope.KotaEnvelope) error {
 
 func (b *Buffer) Purge() error {
 	log.Debug().Msg("purging buffer")
+	util.Pprint(b.envelopes)
 	b.envelopes = []envelope.KotaEnvelope{}
 	b.bufferRecords = 0
 	b.bufferFirstAppended = time.Time{}
