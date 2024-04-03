@@ -53,7 +53,10 @@ func (c *KafkaConsumer) Consume() {
 			fetches := c.client.PollRecords(c.ctx, 1000)
 			iter := fetches.RecordIter()
 			for !iter.Done() {
+				// record := iter.Next()
 				iter.Next()
+				// TODO -> Wrap the record in an envelope and pass to buffer
+				// This is just a stub for now.
 				envelope := envelope.BuildFakeEnvelope()
 				envelopes = append(envelopes, envelope)
 				buffer.Append(envelopes)
