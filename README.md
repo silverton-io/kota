@@ -10,10 +10,10 @@
 
 **Kota interfaces the four ways of collecting System Logs from your Okta Tenant:**
 
+- [System Log API](https://developer.okta.com/docs/reference/api/system-log/)
+- [Event Hooks](https://developer.okta.com/docs/concepts/event-hooks/)
 - [AWS EventBridge Log Streaming](https://help.okta.com/en-us/content/topics/reports/log-streaming/add-aws-eb-log-stream.htm)
 - [Splunk Cloud Log Streaming](https://help.okta.com/en-us/content/topics/reports/log-streaming/add-splunk-log-stream.htm)
-- [Event Hooks](https://developer.okta.com/docs/concepts/event-hooks/)
-- [System Log API](https://developer.okta.com/docs/reference/api/system-log/)
 
 
 **with downstream systems your company uses:**

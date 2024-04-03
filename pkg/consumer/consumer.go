@@ -4,11 +4,14 @@
 
 package consumer
 
-import "github.com/silverton.io/kota/pkg/config"
+import (
+	"github.com/silverton.io/kota/pkg/buffer"
+	"github.com/silverton.io/kota/pkg/config"
+)
 
 type Consumer interface {
 	// Metadata() map[string]interface{} // FIXME -> Get better consumer statistics
-	Initialize(config config.Input) error
-	Consume() error
+	Initialize(config *config.Input, buffer *buffer.Buffer) error
+	Consume()
 	Shutdown() error
 }

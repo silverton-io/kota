@@ -26,7 +26,7 @@ type KafkaConsumer struct {
 
 func (c *KafkaConsumer) Initialize(config *config.Input, buffer *buffer.Buffer) error {
 	ctx, shutdown := context.WithCancel(context.Background())
-	log.Debug().Msg("initializing kafka client")
+	log.Debug().Msg("initializing kafka consumer client")
 	c.topic = config.Kafka.Topic
 	c.group = constants.KOTA
 	c.ctx = ctx
@@ -34,7 +34,7 @@ func (c *KafkaConsumer) Initialize(config *config.Input, buffer *buffer.Buffer) 
 	c.buffer = buffer
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(config.Kafka.Brokers...),
-		kgo.ConsumerGroup(c.group), // Note -> Maybe make this customizable at some point?
+		kgo.ConsumerGroup(c.group),
 		kgo.ConsumeTopics(c.topic),
 	)
 	c.client = client
@@ -53,7 +53,10 @@ func (c *KafkaConsumer) Consume() {
 			fetches := c.client.PollRecords(c.ctx, 1000)
 			iter := fetches.RecordIter()
 			for !iter.Done() {
+				// record := iter.Next()
 				iter.Next()
+				// TODO -> Wrap the record in an envelope and pass to buffer
+				// This is just a stub for now.
 				envelope := envelope.BuildFakeEnvelope()
 				envelopes = append(envelopes, envelope)
 				buffer.Append(envelopes)

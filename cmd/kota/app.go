@@ -28,11 +28,11 @@ import (
 var VERSION string
 
 type App struct {
-	config   *config.Config
-	engine   *gin.Engine
-	consumer consumer.KafkaConsumer
-	buffer   buffer.Buffer
-	debug    bool
+	config    *config.Config
+	engine    *gin.Engine
+	consumers []consumer.Consumer
+	buffer    buffer.Buffer
+	debug     bool
 	// reload chan int --> TODO: reload from updated configuration without killing the running process
 }
 
@@ -141,7 +141,11 @@ func (a *App) initializeConsumers() {
 	log.Info().Msg("initializing consumers")
 	if a.config.Input.Kafka.Enabled {
 		kafka_consumer := consumer.NewKafkaConsumer(&a.config.Input, &a.buffer)
-		a.consumer = *kafka_consumer
+		a.consumers = []consumer.Consumer{kafka_consumer}
+	}
+	if a.config.Input.Okta.Api.Enabled {
+		api_consumer := consumer.NewApiConsumer(&a.config.Input, &a.buffer)
+		a.consumers = append(a.consumers, api_consumer)
 	}
 }
 
@@ -182,7 +186,9 @@ func (a *App) Run() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	// Don't get any more records from upstream sources
-	a.consumer.Shutdown()
+	for _, consumer := range a.consumers {
+		consumer.Shutdown()
+	}
 	// Purge the buffer and shut it down to ensure no records are lost
 	a.buffer.Shutdown()
 	log.Info().Msg("shutting down kota server")

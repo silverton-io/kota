@@ -26,12 +26,12 @@ middleware:
 input:
   okta:
     api: # A polling consumer from the Okta System Logs API
-      enabled: false
+      enabled: true
+    hook: # An HTTP endpoint set up to receive Okta Event Hooks
+      enabled: true
     eventbridge: # A polling EventBridge consumer
       enabled: true
       bus: default
-    hook: # An HTTP endpoint set up to receive Okta Event Hooks
-      enabled: true
   splunk: # A simulated Splunk HEC endpoint
     enabled: true
   kafka: # A Kafka consumer from the designated brokers and topic
