@@ -4,7 +4,7 @@
 
 package config
 
-type Consumer struct {
+type Input struct {
 	// General
 	Group string `json:"group"`
 	// Kinesis, Pub/Sub
@@ -14,4 +14,6 @@ type Consumer struct {
 	// Kafka
 	Topic   string   `json:"topic,omitempty"`
 	Brokers []string `json:"kakfaBrokers,omitempty"`
+	// API
+	Endpoint string `json:"endpoint,omitempty"`
 }
