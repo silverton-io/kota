@@ -6,6 +6,10 @@ package constants
 
 import "time"
 
+// App
+const KOTA = "kota"
+
+// HTTP
 const DEFAULT_HTTP_TIMEOUT = time.Duration(5) * time.Second
 const DEFAULT_SHUTDOWN_TIMEOUT = time.Duration(15) * time.Second
 

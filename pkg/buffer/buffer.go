@@ -54,6 +54,7 @@ func (b *Buffer) Initialize(config *config.Config) error {
 			case <-shutdown:
 				log.Debug().Msg("shutting down buffer")
 				ticker.Stop()
+				b.Purge()
 				log.Debug().Msg("buffer shut down")
 				return
 			}
