@@ -52,10 +52,11 @@ func (c *KafkaConsumer) Consume() {
 			var envelopes []envelope.KotaEnvelope
 			fetches := c.client.PollRecords(c.ctx, 1000)
 			iter := fetches.RecordIter()
-
 			for !iter.Done() {
-				record := iter.Next()
-				buffer.Append()
+				iter.Next()
+				envelope := envelope.BuildFakeEnvelope()
+				envelopes = append(envelopes, envelope)
+				buffer.Append(envelopes)
 			}
 		}
 	}(c.buffer)

@@ -140,7 +140,7 @@ func (a *App) initializeConsumers() {
 	// Consumers for EventBridge | Kinesis | Kafka go here.
 	log.Info().Msg("initializing consumers")
 	if a.config.Input.Kafka.Enabled {
-		kafka_consumer := consumer.NewKafkaConsumer(&a.config.Input)
+		kafka_consumer := consumer.NewKafkaConsumer(&a.config.Input, &a.buffer)
 		a.consumer = *kafka_consumer
 	}
 }
@@ -175,7 +175,7 @@ func (a *App) Run() {
 	go func() {
 		log.Info().Msg("kota is running")
 		if err := server.ListenAndServe(); err != nil {
-			log.Debug().Msg("kota shut down successfully")
+			log.Debug().Err(err).Msg("http server shut down successfully")
 		}
 	}()
 	quit := make(chan os.Signal, 1)
@@ -191,4 +191,5 @@ func (a *App) Run() {
 	if err := server.Shutdown(ctx); err != nil {
 		log.Fatal().Stack().Err(err).Msg("!!kota server forced to shutdown!!")
 	}
+	log.Info().Msg("kota shutdown successfully")
 }

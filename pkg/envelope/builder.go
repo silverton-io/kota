@@ -34,3 +34,15 @@ func BuildEnvelopeFromRawPayload(conf config.App, rawPayload []byte) KotaEnvelop
 	}
 	return envelope
 }
+
+func BuildFakeEnvelope() KotaEnvelope {
+	envelope := KotaEnvelope{
+		Uuid:        uuid.New(),
+		Timestamp:   time.Now(),
+		KotaName:    "fake",
+		KotaVersion: "fake",
+		KotaEnv:     "fake",
+		Payload:     map[string]interface{}{},
+	}
+	return envelope
+}
