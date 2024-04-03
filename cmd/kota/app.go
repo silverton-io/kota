@@ -19,6 +19,7 @@ import (
 	"github.com/silverton.io/kota/pkg/buffer"
 	"github.com/silverton.io/kota/pkg/config"
 	"github.com/silverton.io/kota/pkg/constants"
+	"github.com/silverton.io/kota/pkg/consumer"
 	"github.com/silverton.io/kota/pkg/handler"
 	"github.com/silverton.io/kota/pkg/middleware"
 	"github.com/spf13/viper"
@@ -27,11 +28,11 @@ import (
 var VERSION string
 
 type App struct {
-	config *config.Config
-	engine *gin.Engine
-	// consumer consumer.Consumer
-	buffer buffer.Buffer
-	debug  bool
+	config   *config.Config
+	engine   *gin.Engine
+	consumer consumer.KafkaConsumer
+	buffer   buffer.Buffer
+	debug    bool
 	// reload chan int --> TODO: reload from updated configuration without killing the running process
 }
 
@@ -135,9 +136,13 @@ func (a *App) initializeMiddleware() {
 	}
 }
 
-func (a *App) initializeConsumer() {
+func (a *App) initializeConsumers() {
 	// Consumers for EventBridge | Kinesis | Kafka go here.
-	log.Info().Msg("initializing consumer")
+	log.Info().Msg("initializing consumers")
+	if a.config.Input.Kafka.Enabled {
+		kafka_consumer := consumer.NewKafkaConsumer(&a.config.Input)
+		a.consumer = *kafka_consumer
+	}
 }
 
 func (a *App) initializeRedelivery() {
@@ -154,7 +159,7 @@ func (a *App) initialize() {
 	a.initializeMiddleware()
 	a.initializeRoutes()
 	// Initialize consumer if configured to do so
-	a.initializeConsumer()
+	a.initializeConsumers()
 	// Initialize redelivery mechanisms
 	a.initializeRedelivery()
 }
@@ -170,13 +175,16 @@ func (a *App) Run() {
 	go func() {
 		log.Info().Msg("kota is running")
 		if err := server.ListenAndServe(); err != nil {
-			a.buffer.Shutdown()
 			log.Debug().Msg("kota shut down successfully")
 		}
 	}()
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
+	// Don't get any more records from upstream sources
+	a.consumer.Shutdown()
+	// Purge the buffer and shut it down to ensure no records are lost
+	a.buffer.Shutdown()
 	log.Info().Msg("shutting down kota server")
 	ctx, cancel := context.WithTimeout(context.Background(), constants.DEFAULT_SHUTDOWN_TIMEOUT)
 	defer cancel()

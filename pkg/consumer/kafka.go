@@ -8,42 +8,69 @@ import (
 	"context"
 
 	"github.com/rs/zerolog/log"
+	"github.com/silverton.io/kota/pkg/buffer"
 	"github.com/silverton.io/kota/pkg/config"
+	"github.com/silverton.io/kota/pkg/constants"
+	"github.com/silverton.io/kota/pkg/envelope"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
 type KafkaConsumer struct {
 	client   *kgo.Client
-	stream   string
+	topic    string
 	group    string
-	shutdown chan int
+	buffer   *buffer.Buffer
+	ctx      context.Context
+	shutdown context.CancelFunc
 }
 
-func (c *KafkaConsumer) Initialize(config config.Consumer) error {
-	ctx := context.Background()
+func (c *KafkaConsumer) Initialize(config *config.Input, buffer *buffer.Buffer) error {
+	ctx, shutdown := context.WithCancel(context.Background())
 	log.Debug().Msg("initializing kafka client")
+	c.topic = config.Kafka.Topic
+	c.group = constants.KOTA
+	c.ctx = ctx
+	c.shutdown = shutdown
+	c.buffer = buffer
 	client, err := kgo.NewClient(
-		kgo.SeedBrokers(config.Brokers...),
+		kgo.SeedBrokers(config.Kafka.Brokers...),
+		kgo.ConsumerGroup(c.group), // Note -> Maybe make this customizable at some point?
+		kgo.ConsumeTopics(c.topic),
 	)
 	c.client = client
 	if err != nil {
-		log.Debug().Stack().Err(err).Msg("could not create kafka sink client")
+		log.Fatal().Stack().Err(err).Msg("could not create kafka consumer client")
 		return err
 	}
-	log.Debug().Msg("pinging kafka brokers")
-	err = client.Ping(ctx)
-	if err != nil {
-		log.Debug().Stack().Err(err).Msg("could not ping kafka sink brokers")
-		return err
-	}
-	c.shutdown = make(chan int, 1)
 	return nil
 }
 
-func (c *KafkaConsumer) Consume() error {
-	return nil
+func (c *KafkaConsumer) Consume() {
+	log.Debug().Msg("starting kafka consumer")
+	go func(buffer *buffer.Buffer) {
+		for {
+			var envelopes []envelope.KotaEnvelope
+			fetches := c.client.PollRecords(c.ctx, 1000)
+			iter := fetches.RecordIter()
+
+			for !iter.Done() {
+				record := iter.Next()
+				buffer.Append()
+			}
+		}
+	}(c.buffer)
 }
 
 func (c *KafkaConsumer) Shutdown() error {
+	log.Debug().Msg("shutting down kafka consumer")
+	c.shutdown()
+	c.client.Close()
 	return nil
+}
+
+func NewKafkaConsumer(config *config.Input, buffer *buffer.Buffer) *KafkaConsumer {
+	consumer := KafkaConsumer{}
+	consumer.Initialize(config, buffer)
+	consumer.Consume()
+	return &consumer
 }

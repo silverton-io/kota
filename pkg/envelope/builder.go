@@ -12,7 +12,7 @@ import (
 )
 
 func BuildEnvelopesFromRequest(conf config.App) []KotaEnvelope {
-	fakeEnvelope := KotaEnvelope{
+	envelope := KotaEnvelope{
 		Uuid:        uuid.New(),
 		Timestamp:   time.Now(),
 		KotaName:    conf.Name,
@@ -20,5 +20,17 @@ func BuildEnvelopesFromRequest(conf config.App) []KotaEnvelope {
 		KotaEnv:     conf.Env,
 		Payload:     map[string]interface{}{},
 	}
-	return []KotaEnvelope{fakeEnvelope}
+	return []KotaEnvelope{envelope}
+}
+
+func BuildEnvelopeFromRawPayload(conf config.App, rawPayload []byte) KotaEnvelope {
+	envelope := KotaEnvelope{
+		Uuid:        uuid.New(),
+		Timestamp:   time.Now(),
+		KotaName:    conf.Name,
+		KotaVersion: conf.Version,
+		KotaEnv:     conf.Env,
+		Payload:     map[string]interface{}{},
+	}
+	return envelope
 }

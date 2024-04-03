@@ -7,8 +7,8 @@ package consumer
 import "github.com/silverton.io/kota/pkg/config"
 
 type Consumer interface {
-	Metadata() map[string]interface{} // FIXME -> Get better consumer statistics
-	Initialize(config config.Consumer) error
+	// Metadata() map[string]interface{} // FIXME -> Get better consumer statistics
+	Initialize(config config.Input) error
 	Consume() error
 	Shutdown() error
 }
