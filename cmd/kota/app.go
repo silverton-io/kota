@@ -116,10 +116,10 @@ func (a *App) initializeRoutes() {
 func (a *App) initializeMiddleware() {
 	log.Info().Msg("initializing middleware")
 	a.engine.Use(gin.Recovery())
-	// if a.config.Middleware.Auth.Enabled {
-	// 	log.Debug().Msg("auth middleware enabled - initializing")
-	// 	a.engine.Use(handler.AuthMiddleware(a.config.Middleware.Auth.Tokens))
-	// }
+	if a.config.Middleware.Auth.Enabled {
+		log.Debug().Msg("auth middleware enabled - initializing")
+		a.engine.Use(middleware.Auth(a.config.Middleware.Auth))
+	}
 	if a.config.Middleware.RateLimiter.Enabled {
 		log.Debug().Msg("rate limiter middleware enabled - initializing...")
 		limiter := middleware.BuildRateLimiter(a.config.Middleware.RateLimiter)
