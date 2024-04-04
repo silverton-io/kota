@@ -13,6 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton.io/kota/pkg/buffer"
 	"github.com/silverton.io/kota/pkg/config"
+	"github.com/silverton.io/kota/pkg/envelope"
 )
 
 type SqsConsumer struct {
@@ -49,7 +50,6 @@ func (c *SqsConsumer) Consume() {
 				log.Debug().Msg("shutting down sqs consumer")
 				return
 			default:
-				log.Trace().Msg("polling sqs queue for new records: " + c.queue)
 				results, err := c.client.ReceiveMessage(c.ctx, &sqs.ReceiveMessageInput{
 					QueueUrl: &c.queue,
 				})
@@ -58,8 +58,9 @@ func (c *SqsConsumer) Consume() {
 				}
 				for _, message := range results.Messages {
 					// TODO -> Wrap the record in an envelope and pass to buffer
-					// c.buffer.Append([]envelope.KotaEnvelope{})
-					log.Trace().Msg("deleting message from queue: " + *message.MessageId)
+					fake_envelope := envelope.BuildFakeEnvelope()
+					c.buffer.Append([]envelope.KotaEnvelope{fake_envelope})
+					log.Trace().Msg("deleting message " + *message.MessageId + " from sqs queue: " + c.queue)
 					_, err := c.client.DeleteMessage(c.ctx, &sqs.DeleteMessageInput{
 						QueueUrl:      &c.queue,
 						ReceiptHandle: message.ReceiptHandle,
