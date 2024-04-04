@@ -50,6 +50,7 @@ func (c *SqsConsumer) Consume() {
 				log.Debug().Msg("shutting down sqs consumer")
 				return
 			default:
+				log.Trace().Msg("polling sqs for new messages from queue: " + c.queue)
 				results, err := c.client.ReceiveMessage(c.ctx, &sqs.ReceiveMessageInput{
 					QueueUrl: &c.queue,
 				})

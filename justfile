@@ -21,6 +21,10 @@ run:
 debug:
 	DEBUG=1 go run -ldflags="-X 'main.VERSION=x.x.dev'" {{kota_dir}}
 
+# Run Kota for local development
+dev:
+	DEBUG=1 KOTA_CONFIG_PATH=dev.yaml go run -ldflags="-X 'main.VERSION=x.x.dev'" {{kota_dir}}
+
 # Lint Kota
 lint:
 	@golangci-lint run --config .golangci.yml
