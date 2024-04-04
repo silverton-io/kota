@@ -69,7 +69,7 @@ func (a *App) configure() {
 	// Flip into debug if env variable is set
 	debug := os.Getenv(constants.DEBUG)
 	if is_debug_mode(debug) {
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		zerolog.SetGlobalLevel(zerolog.TraceLevel)
 		log.Warn().Msg("kota is set to debug mode")
 		gin.SetMode(gin.DebugMode)
 		a.config.Middleware.RequestLogger.Enabled = true
@@ -146,6 +146,10 @@ func (a *App) initializeConsumers() {
 	if a.config.Input.Okta.Api.Enabled {
 		api_consumer := consumer.NewApiConsumer(&a.config.Input, &a.buffer)
 		a.consumers = append(a.consumers, api_consumer)
+	}
+	if a.config.Input.Sqs.Enabled {
+		sqs_consumer := consumer.NewSqsConsumer(&a.config.Input, &a.buffer)
+		a.consumers = append(a.consumers, sqs_consumer)
 	}
 }
 

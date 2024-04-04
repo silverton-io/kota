@@ -26,12 +26,9 @@ middleware:
 input:
   okta:
     api: # A polling consumer from the Okta System Logs API
-      enabled: true
+      enabled: false
     hook: # An HTTP endpoint set up to receive Okta Event Hooks
       enabled: true
-    eventbridge: # A polling EventBridge consumer
-      enabled: true
-      bus: default
   splunk: # A simulated Splunk HEC endpoint
     enabled: true
   kafka: # A Kafka consumer from the designated brokers and topic
@@ -47,6 +44,9 @@ input:
   pubsub:
     enabled: false
     topic: systemlogs
+  sqs:
+    enabled: true
+    queue: https://sqs.us-east-1.amazonaws.com/blah/kota-dev
 
 buffer:
   records: 100

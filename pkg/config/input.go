@@ -7,20 +7,20 @@ package config
 type Input struct {
 	Okta    `json:"okta"`
 	Splunk  `json:"splunk"`
-	Kafka   `json:"kafka"`
-	Kinesis `json:"kinesis"`
-	Pubsub  `json:"pubsub"`
+	Kafka   `json:"kafka,omitempty"`
+	Kinesis `json:"kinesis,omitempty"`
+	Pubsub  `json:"pubsub,omitempty"`
+	Sqs     `json:"sqs,omitempty"`
 }
 
 type Okta struct {
-	Eventbridge `json:"eventbridge"`
-	Hook        `json:"hook"`
-	Api         `json:"api"`
+	Hook `json:"hook"`
+	Api  `json:"api"`
 }
 
-type Eventbridge struct {
+type Sqs struct {
 	Enabled bool   `json:"enabled"`
-	Bus     string `json:"bus"`
+	Queue   string `json:"queue,omitempty"`
 }
 
 type Hook struct {
@@ -37,16 +37,16 @@ type Splunk struct {
 
 type Kafka struct {
 	Enabled bool     `json:"enabled"`
-	Topic   string   `json:"topic"`
-	Brokers []string `json:"brokers"`
+	Topic   string   `json:"topic,omitempty"`
+	Brokers []string `json:"brokers,omitempty"`
 }
 
 type Kinesis struct {
 	Enabled bool   `json:"enabled"`
-	Stream  string `json:"stream"`
+	Stream  string `json:"stream,omitempty"`
 }
 
 type Pubsub struct {
 	Enabled bool   `json:"enabled"`
-	Topic   string `json:"topic"`
+	Topic   string `json:"topic,omitempty"`
 }
