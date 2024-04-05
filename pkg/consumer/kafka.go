@@ -12,6 +12,7 @@ import (
 	"github.com/silverton.io/kota/pkg/config"
 	"github.com/silverton.io/kota/pkg/constants"
 	"github.com/silverton.io/kota/pkg/envelope"
+	"github.com/silverton.io/kota/pkg/util"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
@@ -26,7 +27,7 @@ type KafkaConsumer struct {
 
 func (c *KafkaConsumer) Initialize(config *config.Input, buffer *buffer.Buffer) error {
 	ctx, shutdown := context.WithCancel(context.Background())
-	log.Debug().Msg("initializing kafka consumer client")
+	log.Debug().Msg("initializing kafka consumer")
 	c.topic = config.Kafka.Topic
 	c.group = constants.KOTA
 	c.ctx = ctx
@@ -46,15 +47,16 @@ func (c *KafkaConsumer) Initialize(config *config.Input, buffer *buffer.Buffer) 
 }
 
 func (c *KafkaConsumer) Consume() {
-	log.Debug().Msg("starting kafka consumer")
+	log.Debug().Msg("starting kafka consumer from topic: " + c.topic)
 	go func(buffer *buffer.Buffer) {
 		for {
 			var envelopes []envelope.KotaEnvelope
+			log.Trace().Msg("polling kafka for new records from topic: " + c.topic)
 			fetches := c.client.PollRecords(c.ctx, 1000)
 			iter := fetches.RecordIter()
 			for !iter.Done() {
-				// record := iter.Next()
-				iter.Next()
+				record := iter.Next()
+				util.Pprint(record) // TODO -> actually do something useful with this
 				// TODO -> Wrap the record in an envelope and pass to buffer
 				// This is just a stub for now.
 				envelope := envelope.BuildFakeEnvelope()

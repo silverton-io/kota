@@ -5,6 +5,7 @@
 package consumer
 
 import (
+	"context"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -15,25 +16,27 @@ import (
 
 type ApiConsumer struct {
 	buffer   *buffer.Buffer
-	shutdown chan int
+	ctx      context.Context
+	shutdown context.CancelFunc
 }
 
 func (c *ApiConsumer) Initialize(config *config.Input, buffer *buffer.Buffer) error {
 	c.buffer = buffer
-	c.shutdown = make(chan int, 1)
-	ticker := time.NewTicker(time.Duration(500 * float64(time.Millisecond)))
-	go func(shutdown <-chan int) {
+	c.ctx, c.shutdown = context.WithCancel(context.Background())
+	go func() {
 		for {
+			// TODO -> Run this wide open but back off according to 429's
+			// Log when system has been rate limited
 			select {
-			case <-ticker.C:
-				c.Consume()
-			case <-shutdown:
-				ticker.Stop()
+			case <-c.ctx.Done():
 				log.Debug().Msg("shut down api consumer")
 				return
+			default:
+				c.Consume()
 			}
+			time.Sleep(time.Duration(500) * time.Millisecond) // TODO -> remove this and run wide open but back off.
 		}
-	}(c.shutdown)
+	}()
 	return nil
 }
 
@@ -45,7 +48,7 @@ func (c *ApiConsumer) Consume() {
 }
 
 func (c *ApiConsumer) Shutdown() error {
-	c.shutdown <- 1
+	c.shutdown()
 	return nil
 }
 
